@@ -3,11 +3,12 @@ Conexiones del NRF24L01 al arduino nano y arduino pro micro
 NRF24L01 pinouts  ----> https://www.theengineeringprojects.com/wp-content/uploads/2019/02/nrf24l01-pinout.jpg
 Arduino Pro Micro ----> https://cdn.sparkfun.com/r/600-600/assets/9/c/3/c/4/523a1765757b7f5c6e8b4567.png
 Arduino Pro Mini  ----> https://www.luisllamas.es/wp-content/uploads/2015/11/aduino-pinout-pro-mini.png
+Arduino Nano 	  ---->  http://lab.dejaworks.com/wp-content/uploads/2016/08/Arduino-Nano-1024x500.png
 
 
 Conexiones:
 
-NRF24L01		Pro Micro		Pro Mini
+NRF24L01		Pro Micro		Nano
 1	GND			GND				
 2	Vcc(3.3)	3.3V			
 3	CE 			9				
