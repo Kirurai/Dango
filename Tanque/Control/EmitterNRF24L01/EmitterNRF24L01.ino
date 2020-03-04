@@ -5,6 +5,11 @@
 //Declaremos los pines CE y el CSN
 #define CE_PIN 9
 #define CSN_PIN 10
+
+const int SW_pin = 2;
+const int Y_pin = A0;
+const int X_pin = A1;
+
  
 //Variable con la dirección del canal por donde se va a transmitir
 byte direccion[5] ={'c','a','n','a','l'};
@@ -12,38 +17,53 @@ byte direccion[5] ={'c','a','n','a','l'};
 //creamos el objeto radio (NRF24L01)
 RF24 radio(CE_PIN, CSN_PIN);
 
-//vector con los datos a enviar
-float datos[3];
+//vector con los datosValores a enviar
+float datosValores[7];
+String datosNombre[] = {"Eje X = ",
+                        "Eje Y = ",
+                        "Boton Joystick = ",
+                        "Boton 1 = ",
+                        "Boton 2 = ",
+                        "Boton 3 = ",
+                        "Boton 4 = " };
 
 void setup()
 {
-  //inicializamos el NRF24L01 
+  //Configurando el Joystick
+  pinMode(SW_pin, INPUT);
+  digitalWrite(SW_pin, HIGH);
+  
+  //Inicializando el NRF24L01 
   radio.begin();
-  //inicializamos el puerto serie
+  //Inicializando el puerto serie
   Serial.begin(9600); 
  
-//Abrimos un canal de escritura
- radio.openWritingPipe(direccion);
+  //Abriendo un canal de escritura
+  radio.openWritingPipe(direccion);
  
 }
  
 void loop()
 { 
- //cargamos los datos en la variable datos[]
- datos[0]=analogRead(0)* (5.0 / 1023.0);;
- datos[1]=millis();
- datos[2]=3.14;
- //enviamos los datos
- bool ok = radio.write(datos, sizeof(datos));
-  //reportamos por el puerto serial los datos enviados 
+ //cargamos los datosValores en la variable datosValores[]
+ datosValores[0]= analogRead(X_pin);
+ datosValores[1]= analogRead(Y_pin);
+ datosValores[2]= digitalRead(SW_pin);
+ datosValores[3]= -1.0;
+ datosValores[4]= -1.0;
+ datosValores[5]= -1.0;
+ datosValores[6]= -1.0;
+ //enviamos los datosValores
+ bool ok = radio.write(datosValores, sizeof(datosValores));
+  //reportamos por el puerto serial los datosValores enviados 
   if(ok)
   {
-     Serial.print("Datos enviados: "); 
-     Serial.print(datos[0]); 
-     Serial.print(" , "); 
-     Serial.print(datos[1]); 
-     Serial.print(" , "); 
-     Serial.println(datos[2]); 
+    for (int i = 0; i < 7; i++){
+      if (datosValores[i] != -1){
+       Serial.print(datosNombre[i]);
+       Serial.println(datosValores[i]);
+      }
+    }
   }
   else
   {
