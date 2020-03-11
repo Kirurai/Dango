@@ -13,7 +13,7 @@ byte direccion[5] ={'c','a','n','a','l'};
 RF24 radio(CE_PIN, CSN_PIN);
 
 //vector para los datos recibidos
-float datos[7];
+float datosValor[7];
 /*
  * 1 ---> Eje x
  * 2 ---> Eje y
@@ -45,22 +45,22 @@ void loop() {
  if ( radio.available() )
  {    
      //Leemos los datos y los guardamos en la variable datos[]
-     radio.read(datos,sizeof(datos));
+     radio.read(datosValor,sizeof(datosValor));
      //reportamos por el puerto serial los datos recibidos
         Serial.print("Eje X= " );
-        Serial.println(datos[0]);
+        Serial.println(datosValor[0]);
         Serial.print("Eje Y, ");
-        Serial.println(datos[1]);
+        Serial.println(datosValor[1]);
         Serial.print("Botón Joystick = " );
-        Serial.println(datos[2]);
+        Serial.println(datosValor[2]);
         Serial.print("Botón 1 = " );
-        Serial.println(datos[3]);
+        Serial.println(datosValor[3]);
         Serial.print("Botón 2 = " );
-        Serial.println(datos[4]);
+        Serial.println(datosValor[4]);
         Serial.print("Botón 3 = " );
-        Serial.println(datos[5]);
+        Serial.println(datosValor[5]);
         Serial.print("Botón 4 = " );
-        Serial.println(datos[6]);
+        Serial.println(datosValor[6]);
 
  }
  else
