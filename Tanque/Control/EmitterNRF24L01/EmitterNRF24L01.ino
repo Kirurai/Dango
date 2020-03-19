@@ -7,7 +7,7 @@
 #define CSN_PIN 10
 
 const int SW_pin = 8;
-const int Y_Pin = A0;
+const int Y_pin = A0;
 const int X_pin = A1;
 const int bot_1 = 2;
 const int bot_2 = 3;
@@ -48,8 +48,8 @@ void setup()
 void loop()
 { 
  //cargamos los datosValores en la variable datosValores[]
- datosValores[0] = analogRead(X1_pin);
- datosValores[1] = analogRead(Y1_pin);
+ datosValores[0] = analogRead(X_pin);
+ datosValores[1] = analogRead(Y_pin);
  datosValores[2] = digitalRead(SW_pin);
  datosValores[3] = digitalRead(bot_1);
  datosValores[4] = digitalRead(bot_2);
