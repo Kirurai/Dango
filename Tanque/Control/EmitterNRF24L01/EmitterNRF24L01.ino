@@ -7,10 +7,11 @@
 #define CSN_PIN 10
 
 const int SW_pin = 8;
-const int Y1_pin = A0;
-const int X1_pin = A1;
-const int Y2_pin = A2;
-const int X2_pin = A3;
+const int Y_Pin = A0;
+const int X_pin = A1;
+const int bot_1 = 2;
+const int bot_2 = 3;
+const int bot_3 = 4;
 
  
 //Variable con la dirección del canal por donde se va a transmitir
@@ -20,14 +21,13 @@ byte direccion[5] ={'c','a','n','a','l'};
 RF24 radio(CE_PIN, CSN_PIN);
 
 //vector con los datosValores a enviar
-float datosValores[7];
+float datosValores[6];
 String datosNombre[] = {"Eje X1 = ",
                         "Eje Y1 = ",
                         "Boton Joystick = ",
                         "Boton 1 = ",
                         "Boton 2 = ",
-                        "Boton 3 = ",
-                        "Boton 4 = " };
+                        "Boton 3 = "};
 
 void setup()
 {
@@ -51,10 +51,9 @@ void loop()
  datosValores[0] = analogRead(X1_pin);
  datosValores[1] = analogRead(Y1_pin);
  datosValores[2] = digitalRead(SW_pin);
- datosValores[3] = -1.0;
- datosValores[4] = -1.0;
- datosValores[5] = -1.0;
- datosValores[6] = -1.0;
+ datosValores[3] = digitalRead(bot_1);
+ datosValores[4] = digitalRead(bot_2);
+ datosValores[5] = digitalRead(bot_3);
 
  //Reducimos a 11 valores los ejes
  datosValores[0] = datosValores[0]/200 - 5;
@@ -65,7 +64,7 @@ void loop()
   //reportamos por el puerto serial los datosValores enviados 
   if(ok)
   {
-    for (int i = 0; i < 7; i++){
+    for (int i = 0; i < 6; i++){
       if (datosValores[i] != -1){
        Serial.print(datosNombre[i]);
        Serial.println(datosValores[i]);
