@@ -22,8 +22,8 @@ RF24 radio(CE_PIN, CSN_PIN);
 
 //vector con los datosValores a enviar
 float datosValores[6];
-String datosNombre[] = {"Eje X1 = ",
-                        "Eje Y1 = ",
+String datosNombre[] = {"Eje X = ",
+                        "Eje Y = ",
                         "Boton Joystick = ",
                         "Boton 1 = ",
                         "Boton 2 = ",
@@ -55,14 +55,16 @@ void loop()
  datosValores[4] = digitalRead(bot_2);
  datosValores[5] = digitalRead(bot_3);
 
+ datosValores[2] = !datosValores[2];
+
  //Reducimos a 11 valores los ejes
- datosValores[0] = datosValores[0]/200 - 5;
- datosValores[1] = datosValores[1]/200 - 5;
+ datosValores[0] = floor(datosValores[0]/100 - 5);
+ datosValores[1] = floor(datosValores[1]/100 - 5);
 
  //enviamos los datosValores
  bool ok = radio.write(datosValores, sizeof(datosValores));
   //reportamos por el puerto serial los datosValores enviados 
-  if(ok)
+  if(true || ok)
   {
     for (int i = 0; i < 6; i++){
       if (datosValores[i] != -1){
