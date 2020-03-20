@@ -1,4 +1,0 @@
-(sym_lib_table
-  (lib (name ControlPCB-rescue)(type Legacy)(uri ${KIPRJMOD}/ControlPCB-rescue.lib)(options "")(descr "")(disabled))
-  (lib (name mini_pro-cache)(type Legacy)(uri C:/Users/Kirurai/Downloads/Arduino_pro_mini_KiCad5-master/Arduino_pro_mini_KiCad5-master/mini_pro-cache.lib)(options "")(descr ""))
-)

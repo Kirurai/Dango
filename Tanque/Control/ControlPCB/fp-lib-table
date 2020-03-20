@@ -1,7 +1,0 @@
-(fp_lib_table
-  (lib (name Pro-Micro-v11-SF32u4_boards)(type KiCad)(uri C:/Users/Kirurai/Downloads/Pro-Micro-v11-SF32u4_boards)(options "")(descr "")(disabled))
-  (lib (name Keebio-Parts)(type KiCad)(uri C:/Users/Kirurai/Downloads/Keebio-Parts.pretty-master/Keebio-Parts.pretty-master)(options "")(descr "")(disabled))
-  (lib (name nFR24L01)(type KiCad)(uri C:/Users/Kirurai/Downloads/nFR24L01)(options "")(descr ""))
-  (lib (name Hardware)(type KiCad)(uri C:/Users/Kirurai/Downloads/Pro_Micro-master/Pro_Micro-master/Hardware)(options "")(descr "")(disabled))
-  (lib (name Arduino_pro_mini_KiCad5-master)(type KiCad)(uri C:/Users/Kirurai/Downloads/Arduino_pro_mini_KiCad5-master/Arduino_pro_mini_KiCad5-master)(options "")(descr ""))
-)
