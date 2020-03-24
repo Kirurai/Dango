@@ -40,6 +40,7 @@ RF24 radio(CE_PIN, CSN_PIN);
 float datos[7];
 float newdatos[7];
 int auxiliar;
+const cambioVel = 200;
 
 AccelStepper motorIZQ = AccelStepper(DRV8825, pulsosIZQ, dirIZQ);         //Creamos la instancia motor Izquierdo
 AccelStepper motorDER = AccelStepper(DRV8825, pulsosDER, dirDER);         //Creamos la instancia motor Derecho
@@ -85,23 +86,28 @@ void loop() {
            revisarAlerta(Fault, LedALR, motorDER, motorIZQ);
            
            auxiliar = datos[0];
+
+          //TODO: si el problema queda cambiar la variable cambioVel de 200 a 100, 50 o 20
+           
            if ((auxiliar > -6) && (auxiliar < 6)){
-              motorIZQ.setSpeed(auxiliar*(-200));
-              motorDER.setSpeed(auxiliar*(-200));
+              motorIZQ.setSpeed(auxiliar*cambioVel*(-1));
+              motorDER.setSpeed(auxiliar*cambioVel*(-1));
            }else{
               activarAlerta(LedALR, motorDER, motorIZQ);
            }
+           motorIZQ.runSpeed();
+           motorDER.runSpeed(); 
            auxiliar = datos[1];
            if ((auxiliar>-6) && (auxiliar <6)){
-              motorIZQ.setSpeed(auxiliar*200);
-              motorDER.setSpeed(auxiliar*(-200));
+              motorIZQ.setSpeed(auxiliar*cambioVel);
+              motorDER.setSpeed(auxiliar*cambioVel*(-1));
            }else{
               activarAlerta(LedALR, motorDER, motorIZQ);
            }
+           motorIZQ.runSpeed();
+           motorDER.runSpeed(); 
            revisarAlerta(Fault, LedALR, motorDER, motorIZQ);
-     }
-     else
-     {
+     }else{
          //Serial.println("No hay datos de radio disponibles");
          //activarAlerta(LedALR, motorDER, motorIZQ);
         for (int i=0; i<2; i++){
@@ -111,7 +117,16 @@ void loop() {
            digitalWrite(LedOKA, true);
         }
      }
-     /*
+     do {  
+       radio.read(newdatos,sizeof(newdatos));  
+       motorIZQ.runSpeed();
+       motorDER.runSpeed();
+       revisarAlerta(Fault, LedALR, motorDER, motorIZQ);      
+     } while(radio.available() && comparar(datos, newdatos));
+    for (int i = 0; i <= 7; i++){
+        datos[i] = newdatos[i];
+    }
+         /*
     Serial.print("Datos: ");
     for (int i = 0; i < 7; i++){
       Serial.print(datos[i]);
@@ -123,15 +138,6 @@ void loop() {
      Serial.print("Motor Derecho:  ");
      Serial.println(motorDER.speed());
      */
-     do {  
-       radio.read(newdatos,sizeof(newdatos));  
-       motorIZQ.runSpeed();
-       motorDER.runSpeed();
-       revisarAlerta(Fault, LedALR, motorDER, motorIZQ);      
-     } while(radio.available() && comparar(datos, newdatos));
-    for (int i = 0; i <= 7; i++){
-        datos[i] = newdatos[i];
-    }
 }
 
 boolean comparar (float datos[], float newdatos[]){
