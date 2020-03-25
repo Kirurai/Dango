@@ -72,8 +72,8 @@ void setup(){
    motorIZQ.setMaxSpeed(1000); //Definimos la velocidad maxima del motor izq
    motorDER.setMaxSpeed(1000); //Definimos la velocidad maxima del motor der
 
-   motorIZQ.setSpeed(500);
-   motorDER.setSpeed(500);
+   motorIZQ.setSpeed(0);
+   motorDER.setSpeed(0);
 }
 
 void loop(){
@@ -88,16 +88,19 @@ void loop(){
          //Leemos los datos y los guardamos en la variable datos[]
          radio.read(datos, sizeof(datos));
 
-         auxiliar = datos[0];
-         motorIZQ.setSpeed(auxiliar * cambioVel * (-1));
-         motorDER.setSpeed(auxiliar * cambioVel * (-1));
+         auxiliar = datos[2];
+         if(auxiliar){
+         
+         motorIZQ.setSpeed(5 * cambioVel);
+         motorDER.setSpeed(5 * cambioVel);
 
-   motorIZQ.runSpeed();
-   motorDER.runSpeed();
+   //motorIZQ.runSpeed();
+   //motorDER.runSpeed();
+   }else{
          auxiliar = datos[1];
          motorIZQ.setSpeed(auxiliar * cambioVel);
          motorDER.setSpeed(auxiliar * cambioVel * (-1));
-
+   }
    motorIZQ.runSpeed();
    motorDER.runSpeed();
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
