@@ -184,7 +184,7 @@ void pruebaSerial(float datos[])
    for (int i = 0; i < 7; i++)
    {
       Serial.print(datos[i]);
-      Serial.print(" / ");
+      Serial.print(" -- ");
    }
 }
 void moverMotores(AccelStepper motorL, AccelStepper motorR)
