@@ -87,7 +87,7 @@ void loop(){
          //Leemos los datos y los guardamos en la variable datos[]
          radio.read(datos, sizeof(datos));
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
-         
+
          auxiliar = datos[0];
          motorIZQ.setSpeed(auxiliar * cambioVel * (-1));
          motorDER.setSpeed(auxiliar * cambioVel * (-1));
@@ -96,7 +96,6 @@ void loop(){
          auxiliar = datos[1];
          motorIZQ.setSpeed(auxiliar * cambioVel);
          motorDER.setSpeed(auxiliar * cambioVel * (-1));
-
 
          moverMotores(motorIZQ, motorDER);
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
@@ -109,11 +108,10 @@ void loop(){
             digitalWrite(LedOKA, true);
          }
       }
-   //pruebaSerial(datos);
-}else{
-   moverMotores(motorIZQ, motorDER);
-   relojito++;
-}
+  }else{
+     moverMotores(motorIZQ, motorDER);
+     relojito++;
+  }
 }
 
 boolean comparar(float datos[], float newdatos[])
