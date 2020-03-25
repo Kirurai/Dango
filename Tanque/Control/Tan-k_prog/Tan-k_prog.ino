@@ -72,32 +72,34 @@ void setup(){
    motorIZQ.setMaxSpeed(1000); //Definimos la velocidad maxima del motor izq
    motorDER.setMaxSpeed(1000); //Definimos la velocidad maxima del motor der
 
-   motorIZQ.setSpeed(0);
-   motorDER.setSpeed(0);
+   motorIZQ.setSpeed(500);
+   motorDER.setSpeed(500);
 }
 
 void loop(){
    if (relojito % 2000 == 0){
       relojito = 1;
       if (radio.available()){
-         moverMotores(motorIZQ, motorDER);
+   motorIZQ.runSpeed();
+   motorDER.runSpeed();
          digitalWrite(LedOKA, true);
          digitalWrite(LedALR, false);
 
          //Leemos los datos y los guardamos en la variable datos[]
          radio.read(datos, sizeof(datos));
-         revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
 
          auxiliar = datos[0];
          motorIZQ.setSpeed(auxiliar * cambioVel * (-1));
          motorDER.setSpeed(auxiliar * cambioVel * (-1));
 
-         moverMotores(motorIZQ, motorDER);
+   motorIZQ.runSpeed();
+   motorDER.runSpeed();
          auxiliar = datos[1];
          motorIZQ.setSpeed(auxiliar * cambioVel);
          motorDER.setSpeed(auxiliar * cambioVel * (-1));
 
-         moverMotores(motorIZQ, motorDER);
+   motorIZQ.runSpeed();
+   motorDER.runSpeed();
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
       }else{
          for (int i = 0; i < 2; i++){
@@ -109,10 +111,14 @@ void loop(){
          }
       }
   }else{
-     moverMotores(motorIZQ, motorDER);
+   motorIZQ.runSpeed();
+   motorDER.runSpeed();
      relojito++;
   }
 }
+
+
+
 
 boolean comparar(float datos[], float newdatos[])
 {
@@ -135,19 +141,19 @@ boolean comparar(float datos[], float newdatos[])
    return true;
 }
 
-void revisarAlerta(int fault, int LedALR, AccelStepper motorL, AccelStepper motorR)
+void revisarAlerta(int fault, int led, AccelStepper motorIZQ, AccelStepper motorDER)
 {
    if (!digitalRead(fault))
    {
-      activarAlerta(LedALR, motorL, motorR);
+      activarAlerta(led, motorIZQ, motorDER);
    }
    else
    {
-      desactivarAlerta(LedALR, motorL, motorR);
+      desactivarAlerta(led, motorIZQ, motorDER);
    }
 }
 
-void activarAlerta(int LedALR, AccelStepper motorL, AccelStepper motorR)
+void activarAlerta(int LedALR, AccelStepper motorIZQ, AccelStepper motorDER)
 {
    digitalWrite(LedOKA, false);
    for (int i = 0; i < 2; i++)
@@ -157,16 +163,16 @@ void activarAlerta(int LedALR, AccelStepper motorL, AccelStepper motorR)
       delay(150);
       digitalWrite(LedALR, true);
    }
-   motorL.stop();
-   motorR.stop();
+   motorIZQ.stop();
+   motorDER.stop();
 }
 
-void desactivarAlerta(int LedALR, AccelStepper motorL, AccelStepper motorR)
+void desactivarAlerta(int LedALR, AccelStepper motorIZQ, AccelStepper motorDER)
 {
    digitalWrite(LedALR, false);
    digitalWrite(LedOKA, true);
-   motorL.runSpeed();
-   motorR.runSpeed();
+   motorIZQ.runSpeed();
+   motorDER.runSpeed();
 }
 void pruebaSerial(float datos[])
 {
@@ -177,8 +183,8 @@ void pruebaSerial(float datos[])
       Serial.print(" -- ");
    }
 }
-void moverMotores(AccelStepper motorL, AccelStepper motorR)
+void moverMotores(AccelStepper motorIZQ, AccelStepper motorDER)
 {
-   motorL.runSpeed();
-   motorR.runSpeed();
+   motorIZQ.runSpeed();
+   motorDER.runSpeed();
 }
