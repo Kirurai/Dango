@@ -109,8 +109,7 @@ void loop(){
          moverMotores(motorIZQ, motorDER);
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
       }else{
-         for (int i = 0; i < 2; i++)
-         {
+         for (int i = 0; i < 2; i++){
 
             delay(150);
             digitalWrite(LedOKA, false);
