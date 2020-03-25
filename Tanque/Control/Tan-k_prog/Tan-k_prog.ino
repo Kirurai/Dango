@@ -37,8 +37,11 @@ RF24 radio(CE_PIN, CSN_PIN);
 //vector para los datos recibidos
 float datos[7];
 float newdatos[7];
-int auxiliar;
-const int cambioVel = 200;
+int ejeX;
+int ejeY;
+int coef;
+const int velMax = 1000;
+const int cteVel = 200;
 
 AccelStepper motorIZQ = AccelStepper(DRV8825, pulsosIZQ, dirIZQ); //Creamos la instancia motor Izquierdo
 AccelStepper motorDER = AccelStepper(DRV8825, pulsosDER, dirDER); //Creamos la instancia motor Derecho
@@ -69,7 +72,7 @@ void setup(){
    digitalWrite(LedOKA, false);
    digitalWrite(LedALR, false);
 
-   motorIZQ.setMaxSpeed(1000); //Definimos la velocidad maxima del motor izq
+   motorIZQ.setMaxSpeed(velMax); //Definimos la velocidad maxima del motor izq
    motorDER.setMaxSpeed(1000); //Definimos la velocidad maxima del motor der
 
    motorIZQ.setSpeed(0);
@@ -88,19 +91,31 @@ void loop(){
          //Leemos los datos y los guardamos en la variable datos[]
          radio.read(datos, sizeof(datos));
 
-         auxiliar = datos[2];
-         if(auxiliar){
-         
-         motorIZQ.setSpeed(5 * cambioVel);
-         motorDER.setSpeed(5 * cambioVel);
+         ejeX = datos[0];
+         ejeY = datos[1];
+  
+         if (abs(ejeX) + abs(ejeY) <= 5){
+          if (ejeY > 0){
+            if (ejeX > 0){
+              motorIZQ.setSpeed((ejeY + ejeX)*cteVel);
+              motorDER.setSpeed((ejeY)*cteVel*(-1));
+            }else{
+              motorIZQ.setSpeed((ejeY)*cteVel);
+              motorDER.setSpeed((ejeY - ejeX)*cteVel*(-1));
+            }
+          }else{
+            if (ejeX > 0){
+              motorIZQ.setSpeed((ejeY - ejeX)*cteVel*(-1));
+              motorDER.setSpeed((ejeY)*cteVel);
+            }else{
+              motorIZQ.setSpeed((ejeY)*cteVel);
+              motorDER.setSpeed((ejeY + ejeX)*cteVel*(-1));
+            }
+          }
+         }else{
+          }
 
-   //motorIZQ.runSpeed();
-   //motorDER.runSpeed();
-   }else{
-         auxiliar = datos[1];
-         motorIZQ.setSpeed(auxiliar * cambioVel);
-         motorDER.setSpeed(auxiliar * cambioVel * (-1));
-   }
+         
    motorIZQ.runSpeed();
    motorDER.runSpeed();
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
