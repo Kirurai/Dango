@@ -77,6 +77,5 @@ void loop()
   {
      Serial.println("no se ha podido enviar");
   }
-  delay(1000);
 }
  
