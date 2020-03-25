@@ -52,8 +52,7 @@ boolean comparar(float[], float[]);
 void moverMotores(AccelStepper, AccelStepper);
 void pruebaSerial(float[]);
 
-void setup()
-{
+void setup(){
    //inicializamos el NRF24L01
    radio.begin();
    //inicializamos el puerto serie
