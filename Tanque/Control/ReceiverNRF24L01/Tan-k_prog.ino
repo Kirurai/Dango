@@ -40,154 +40,147 @@ RF24 radio(CE_PIN, CSN_PIN);
 float datos[7];
 float newdatos[7];
 int auxiliar;
-const cambioVel = 200;
+const int cambioVel = 200;
 
 AccelStepper motorIZQ = AccelStepper(DRV8825, pulsosIZQ, dirIZQ);         //Creamos la instancia motor Izquierdo
 AccelStepper motorDER = AccelStepper(DRV8825, pulsosDER, dirDER);         //Creamos la instancia motor Derecho
 
+int relojito = 0;
 
 
 void revisarAlerta(int, int, AccelStepper, AccelStepper);
 void activarAlerta(int, AccelStepper, AccelStepper);
 void desactivarAlerta(int, AccelStepper, AccelStepper);
-boolean comparar (float datos[], float newdatos[]);
+boolean comparar (float[], float[]);
+void moverMotores(AccelStepper, AccelStepper);
+void pruebaSerial(float[]);
 
-void setup()
-{
- //inicializamos el NRF24L01 
-  radio.begin();
-  //inicializamos el puerto serie
-  Serial.begin(9600); 
+void setup() {
+   //inicializamos el NRF24L01 
+   radio.begin();
+   //inicializamos el puerto serie
+   Serial.begin(9600);   
+   //Abrimos el canal de Lectura
+   radio.openReadingPipe(1, direccion);  
+   //empezamos a escuchar por el canal
+   radio.startListening();
   
-  //Abrimos el canal de Lectura
-  radio.openReadingPipe(1, direccion);
-  
-    //empezamos a escuchar por el canal
-  radio.startListening();
-  
-  pinMode(Fault, INPUT);
-  pinMode(buzzer, OUTPUT);
-  pinMode(LedOKA, OUTPUT);
-  pinMode(LedALR, OUTPUT);
-  digitalWrite(LedOKA, false);
-  digitalWrite(LedALR, false);
+   pinMode(Fault, INPUT);
+   pinMode(buzzer, OUTPUT);
+   pinMode(LedOKA, OUTPUT);
+   pinMode(LedALR, OUTPUT);
+   digitalWrite(LedOKA, false);
+   digitalWrite(LedALR, false);
 
-  motorIZQ.setMaxSpeed(1000);       //Definimos la velocidad maxima del motor izq
-  motorDER.setMaxSpeed(1000);       //Definimos la velocidad maxima del motor der
+   motorIZQ.setMaxSpeed(1000);       //Definimos la velocidad maxima del motor izq
+   motorDER.setMaxSpeed(1000);       //Definimos la velocidad maxima del motor der
+
+   motorIZQ.setSpeed(0);
+   motorDER.setSpeed(0);
 }
  
 void loop() {
-     if ( radio.available() ){    
-           digitalWrite(LedOKA, true);
-           digitalWrite(LedALR, false);
-           //Leemos los datos y los guardamos en la variable datos[]
-           radio.read(datos,sizeof(datos));       
-    
-           revisarAlerta(Fault, LedALR, motorDER, motorIZQ);
-           
-           auxiliar = datos[0];
+   if (relojito % 8000 == 0){
+      relojito = 1;
+      if ( radio.available() ){
+         moverMotores(motorIZQ, motorDER);
+         digitalWrite(LedOKA, true);
+         digitalWrite(LedALR, false);
 
-          //TODO: si el problema queda cambiar la variable cambioVel de 200 a 100, 50 o 20
+         //Leemos los datos y los guardamos en la variable datos[]
+         radio.read(datos,sizeof(datos));
+         revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
+         auxiliar = datos[0];
            
-           if ((auxiliar > -6) && (auxiliar < 6)){
-              motorIZQ.setSpeed(auxiliar*cambioVel*(-1));
-              motorDER.setSpeed(auxiliar*cambioVel*(-1));
-           }else{
-              activarAlerta(LedALR, motorDER, motorIZQ);
-           }
-           motorIZQ.runSpeed();
-           motorDER.runSpeed(); 
-           auxiliar = datos[1];
-           if ((auxiliar>-6) && (auxiliar <6)){
-              motorIZQ.setSpeed(auxiliar*cambioVel);
-              motorDER.setSpeed(auxiliar*cambioVel*(-1));
-           }else{
-              activarAlerta(LedALR, motorDER, motorIZQ);
-           }
-           motorIZQ.runSpeed();
-           motorDER.runSpeed(); 
-           revisarAlerta(Fault, LedALR, motorDER, motorIZQ);
-     }else{
-         //Serial.println("No hay datos de radio disponibles");
-         //activarAlerta(LedALR, motorDER, motorIZQ);
-        for (int i=0; i<2; i++){
-           delay(150);
-           digitalWrite(LedOKA, false);
-           delay(150);
-           digitalWrite(LedOKA, true);
-        }
-     }
-     do {  
-       radio.read(newdatos,sizeof(newdatos));  
-       motorIZQ.runSpeed();
-       motorDER.runSpeed();
-       revisarAlerta(Fault, LedALR, motorDER, motorIZQ);      
-     } while(radio.available() && comparar(datos, newdatos));
-    for (int i = 0; i <= 7; i++){
-        datos[i] = newdatos[i];
+         if ((auxiliar > -6) && (auxiliar < 6)){
+            motorIZQ.setSpeed(auxiliar*cambioVel*(-1));
+            motorDER.setSpeed(auxiliar*cambioVel*(-1));
+         }else{
+            activarAlerta(LedALR, motorIZQ, motorDER);
+         }
+
+         moverMotores(motorIZQ, motorDER);
+         auxiliar = datos[1];
+
+         if ((auxiliar>-6) && (auxiliar <6)){
+            motorIZQ.setSpeed(auxiliar*cambioVel);
+            motorDER.setSpeed(auxiliar*cambioVel*(-1));
+         }else{
+            activarAlerta(LedALR, motorIZQ, motorDER);
+         }
+
+         moverMotores(motorIZQ, motorDER);
+         revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
+      }else{
+         for (int i=0; i<2; i++){
+         
+            delay(150);
+            digitalWrite(LedOKA, false);
+            delay(150);
+            digitalWrite(LedOKA, true);
+         }
+      }
     }
-         /*
-    Serial.print("Datos: ");
-    for (int i = 0; i < 7; i++){
-      Serial.print(datos[i]);
-      Serial.print(" / ");
-    }
-    Serial.println();
-     Serial.print("Motor Izquierdo:  ");
-     Serial.println(motorIZQ.speed());
-     Serial.print("Motor Derecho:  ");
-     Serial.println(motorDER.speed());
-     */
+    //pruebaSerial(datos);
+   }else{
+      motorIZQ.runSpeed();
+      motorDER.runSpeed();
+      relojito++;
+   }
 }
 
 boolean comparar (float datos[], float newdatos[]){
-    for (int i = 0; i <= 7; i++){
-        if(datos[i] != newdatos[i]){
-            //Serial.println("Salida del While");
-            return false;
-        }
-    }
-    /*
-    Serial.print("Datos: ");
-    for (int i = 0; i < 7; i++){
+   for (int i = 0; i <= 7; i++){
+      if(datos[i] != newdatos[i]){
+         return false;
+      }
+   }
+   Serial.println();
+   Serial.print("NewDatos: ");
+   for (int i = 0; i < 7; i++){
+     Serial.print(newdatos[i]);
+     Serial.print(" / ");
+   }
+   Serial.println();
+   Serial.println("Dentro del While");
+   */
+   return true;
+}
+
+void revisarAlerta(int fault, int LedALR, AccelStepper motorL, AccelStepper motorR){
+   if (!digitalRead(fault)){
+      activarAlerta(LedALR, motorL, motorR);
+   }else{
+      desactivarAlerta(LedALR, motorL, motorR);
+   }
+}
+
+void activarAlerta(int LedALR, AccelStepper motorL, AccelStepper motorR){
+   digitalWrite(LedOKA, false);
+   for (int i=0; i<2; i++){
+      delay(150);
+      digitalWrite(LedALR, false);
+      delay(150);
+      digitalWrite(LedALR, true);
+   }
+   motorL.stop();
+   motorR.stop();
+}
+
+void desactivarAlerta(int LedALR, AccelStepper motorL, AccelStepper motorR){
+   digitalWrite(LedALR, false);
+   digitalWrite(LedOKA, true);
+   motorL.runSpeed();
+   motorR.runSpeed();
+}
+void pruebaSerial(float datos[]){
+   Serial.print("Datos: ");
+   for (int i = 0; i < 7; i++){
       Serial.print(datos[i]);
       Serial.print(" / ");
-    }
-    Serial.println();
-    Serial.print("NewDatos: ");
-    for (int i = 0; i < 7; i++){
-      Serial.print(newdatos[i]);
-      Serial.print(" / ");
-    }
-    Serial.println();
-    Serial.println("Dentro del While");
-    */
-    return true;
+   }
 }
-
-void revisarAlerta(int fault, int LedALR, AccelStepper motorDER, AccelStepper motorIZQ){
-   if (!digitalRead(fault)){
-       activarAlerta(LedALR, motorDER, motorIZQ);
-    }else{
-       desactivarAlerta(LedALR, motorDER, motorIZQ);
-    }
-}
-
-void activarAlerta(int LedALR, AccelStepper motorDER, AccelStepper motorIZQ){
-    digitalWrite(LedOKA, false);
-    for (int i=0; i<2; i++){
-       delay(150);
-       digitalWrite(LedALR, false);
-       delay(150);
-       digitalWrite(LedALR, true);
-    }
-    motorIZQ.stop();
-    motorDER.stop();
-}
-
-void desactivarAlerta(int LedALR, AccelStepper motorDER, AccelStepper motorIZQ){
-    digitalWrite(LedALR, false);
-    digitalWrite(LedOKA, true);
-    motorIZQ.runSpeed();
-    motorDER.runSpeed(); 
+void moverMotores(AccelStepper motorL, AccelStepper motorR){
+   motorL.runSpeed();
+   motorR.runSpeed();
 }
