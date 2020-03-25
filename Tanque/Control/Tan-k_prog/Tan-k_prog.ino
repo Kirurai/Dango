@@ -78,11 +78,9 @@ void setup()
 }
 
 void loop(){
-   if (relojito % 2000 == 0)
-   {
+   if (relojito % 2000 == 0){
       relojito = 1;
-      if (radio.available())
-      {
+      if (radio.available()){
          moverMotores(motorIZQ, motorDER);
          digitalWrite(LedOKA, true);
          digitalWrite(LedALR, false);
@@ -92,34 +90,26 @@ void loop(){
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
          auxiliar = datos[0];
 
-         if ((auxiliar > -6) && (auxiliar < 6))
-         {
+         if ((auxiliar > -6) && (auxiliar < 6)){
             motorIZQ.setSpeed(auxiliar * cambioVel * (-1));
             motorDER.setSpeed(auxiliar * cambioVel * (-1));
-         }
-         else
-         {
+         }else{
             activarAlerta(LedALR, motorIZQ, motorDER);
          }
 
          moverMotores(motorIZQ, motorDER);
          auxiliar = datos[1];
 
-         if ((auxiliar > -6) && (auxiliar < 6))
-         {
+         if ((auxiliar > -6) && (auxiliar < 6)){
             motorIZQ.setSpeed(auxiliar * cambioVel);
             motorDER.setSpeed(auxiliar * cambioVel * (-1));
-         }
-         else
-         {
+         }else{
             activarAlerta(LedALR, motorIZQ, motorDER);
          }
 
          moverMotores(motorIZQ, motorDER);
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
-      }
-      else
-      {
+      }else{
          for (int i = 0; i < 2; i++)
          {
 
