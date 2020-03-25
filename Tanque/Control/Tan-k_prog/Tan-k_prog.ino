@@ -80,11 +80,7 @@ void setup() {
 }
  
 void loop() {
-<<<<<<< HEAD:Tanque/Control/Tan-k_prog/Tan-k_prog.ino
    if (relojito % 8000 == 0){
-=======
-   if (relojito % 2000 == 0){
->>>>>>> c074f73a10a086849556fd510519745a153cbb41:Tanque/Control/Tan-k_prog/Tan-k_prog.ino/Tan-k_prog.ino.ino
       relojito = 1;
       if ( radio.available() ){
          moverMotores(motorIZQ, motorDER);
@@ -124,17 +120,11 @@ void loop() {
             digitalWrite(LedOKA, true);
          }
       }
-<<<<<<< HEAD:Tanque/Control/Tan-k_prog/Tan-k_prog.ino
     }
     //pruebaSerial(datos);
    }else{
       motorIZQ.runSpeed();
       motorDER.runSpeed();
-=======
-    //pruebaSerial(datos);
-   }else{
-      moverMotores(motorIZQ, motorDER);
->>>>>>> c074f73a10a086849556fd510519745a153cbb41:Tanque/Control/Tan-k_prog/Tan-k_prog.ino/Tan-k_prog.ino.ino
       relojito++;
    }
 }
@@ -153,11 +143,7 @@ boolean comparar (float datos[], float newdatos[]){
    }
    Serial.println();
    Serial.println("Dentro del While");
-<<<<<<< HEAD:Tanque/Control/Tan-k_prog/Tan-k_prog.ino
    */
-=======
-   
->>>>>>> c074f73a10a086849556fd510519745a153cbb41:Tanque/Control/Tan-k_prog/Tan-k_prog.ino/Tan-k_prog.ino.ino
    return true;
 }
 
