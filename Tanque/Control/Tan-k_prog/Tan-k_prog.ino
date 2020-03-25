@@ -87,24 +87,16 @@ void loop(){
          //Leemos los datos y los guardamos en la variable datos[]
          radio.read(datos, sizeof(datos));
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
+         
          auxiliar = datos[0];
-
-         if ((auxiliar > -6) && (auxiliar < 6)){
-            motorIZQ.setSpeed(auxiliar * cambioVel * (-1));
-            motorDER.setSpeed(auxiliar * cambioVel * (-1));
-         }else{
-            activarAlerta(LedALR, motorIZQ, motorDER);
-         }
+         motorIZQ.setSpeed(auxiliar * cambioVel * (-1));
+         motorDER.setSpeed(auxiliar * cambioVel * (-1));
 
          moverMotores(motorIZQ, motorDER);
          auxiliar = datos[1];
+         motorIZQ.setSpeed(auxiliar * cambioVel);
+         motorDER.setSpeed(auxiliar * cambioVel * (-1));
 
-         if ((auxiliar > -6) && (auxiliar < 6)){
-            motorIZQ.setSpeed(auxiliar * cambioVel);
-            motorDER.setSpeed(auxiliar * cambioVel * (-1));
-         }else{
-            activarAlerta(LedALR, motorIZQ, motorDER);
-         }
 
          moverMotores(motorIZQ, motorDER);
          revisarAlerta(Fault, LedALR, motorIZQ, motorDER);
