@@ -14,8 +14,8 @@ RF24 radio(CE_PIN, CSN_PIN);
 
 
 #define SW_pin  6
-#define Y_pin  A1
-#define X_pin  A0
+#define Y_pin  A0
+#define X_pin  A1
 
 #define boton1  5             //Botón         
 #define boton2  4             //Botón          
