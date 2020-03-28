@@ -5,76 +5,79 @@
 //Declaremos los pines CE y el CSN
 #define CE_PIN 9
 #define CSN_PIN 10
-
-const int SW_pin = 8;
-const int Y_pin = A0;
-const int X_pin = A1;
-const int bot_1 = 2;
-const int bot_2 = 3;
-const int bot_3 = 4;
-
  
 //Variable con la dirección del canal por donde se va a transmitir
-byte direccion[5] ={'c','a','n','a','l'};
+byte direccion[5] ={'t','a','n','-','k'};
 
 //creamos el objeto radio (NRF24L01)
 RF24 radio(CE_PIN, CSN_PIN);
 
-//vector con los datosValores a enviar
-float datosValores[6];
-String datosNombre[] = {"Eje X = ",
-                        "Eje Y = ",
-                        "Boton Joystick = ",
-                        "Boton 1 = ",
-                        "Boton 2 = ",
-                        "Boton 3 = "};
+
+#define SW_pin  6
+#define Y_pin  A1
+#define X_pin  A0
+
+#define boton1  5             //Botón         
+#define boton2  4             //Botón          
+#define boton3  A3           //La entrada analogica la tomo como digital     
+#define ntc  A2           //Sensor de temperatura para las 18650.
+    
+#define ledOK  8          //Led indicador de emparejamiento del NRF24L01
+#define alerta 7           //Led indicador de alerta.
+
+float datosValores[7];
+
 
 void setup()
 {
-  //Configurando el Joystick
-  pinMode(SW_pin, INPUT);
-  digitalWrite(SW_pin, HIGH);
-  
-  //Inicializando el NRF24L01 
+  //inicializamos el NRF24L01 
   radio.begin();
-  //Inicializando el puerto serie
+  //inicializamos el puerto serie
   Serial.begin(9600); 
  
-  //Abriendo un canal de escritura
-  radio.openWritingPipe(direccion);
- 
+//Abrimos un canal de escritura
+ radio.openWritingPipe(direccion);
+
+  //Configurando el Joystick0
+  pinMode(SW_pin, INPUT);
+  pinMode(boton1, INPUT);
+  pinMode(boton2, INPUT);
+  pinMode(boton3, INPUT);
+  pinMode(ledOK, OUTPUT);
+  pinMode(alerta, OUTPUT);
+  digitalWrite(alerta, false);
+  digitalWrite(ledOK, false);
+  
 }
  
 void loop()
 { 
+
  //cargamos los datosValores en la variable datosValores[]
- datosValores[0] = analogRead(X_pin);
- datosValores[1] = analogRead(Y_pin);
- datosValores[2] = digitalRead(SW_pin);
- datosValores[3] = digitalRead(bot_1);
- datosValores[4] = digitalRead(bot_2);
- datosValores[5] = digitalRead(bot_3);
-
- datosValores[2] = !datosValores[2];
-
- //Reducimos a 11 valores los ejes
- datosValores[0] = floor(datosValores[0]/100 - 5);
- datosValores[1] = floor(datosValores[1]/100 - 5);
-
- //enviamos los datosValores
+ datosValores[0]= analogRead(X_pin);
+ datosValores[1]= analogRead(Y_pin);
+ datosValores[2]= digitalRead(SW_pin);
+ datosValores[3]= digitalRead(boton1);
+ datosValores[4]= digitalRead(boton2);
+ datosValores[5]= digitalRead(boton3);
+ datosValores[6]= analogRead(ntc);
+ 
+ datosValores[0] = (-1)*round(datosValores[0]/100 - 5);
+ datosValores[1] = (-1)*round(datosValores[1]/100 - 5);
+ 
+ //enviamos los datos
  bool ok = radio.write(datosValores, sizeof(datosValores));
-  //reportamos por el puerto serial los datosValores enviados 
-  if(true || ok)
+  //reportamos por el puerto serial los datos enviados 
+  if(ok)
   {
-    for (int i = 0; i < 6; i++){
-      if (datosValores[i] != -1){
-       Serial.print(datosNombre[i]);
-       Serial.println(datosValores[i]);
-      }
-    }
+     digitalWrite(8, true);
+     digitalWrite(7, false);
+     Serial.println("Se ha establecido la comunicación.");
   }
   else
   {
+     digitalWrite(8, false);
+     digitalWrite(7, true);
      Serial.println("no se ha podido enviar");
   }
 }
