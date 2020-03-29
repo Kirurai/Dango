@@ -8,6 +8,8 @@
 #include <Wire.h>
 #include <SD.h>
 
+#include "extras.h"
+
 #define CS 2
 
 #define LedALR A1 //Salida led indicadora de que hay un problema
