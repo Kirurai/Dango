@@ -16,6 +16,7 @@
 void revisarAlerta(int, int, AccelStepper, AccelStepper);
 void activarAlerta(int , AccelStepper, AccelStepper);
 void desactivarAlerta(int, AccelStepper, AccelStepper);
+boolean comparar(float[], float[]);
 void pruebaSerial(float[]);
 void moverMotores(AccelStepper, AccelStepper);
 

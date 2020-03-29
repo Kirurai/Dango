@@ -29,8 +29,28 @@ void desactivarAlerta(int LedALR, AccelStepper motorL, AccelStepper motorR)
 {
     digitalWrite(LedALR, false);
     digitalWrite(LedOKA, true);
-    motorL.runSpeed();
-    motorR.runSpeed();
+    moverMotores(motorL, motorR);
+}
+
+boolean comparar(float datos[], float newdatos[])
+{
+    for (int i = 0; i <= 7; i++)
+    {
+        if (datos[i] != newdatos[i])
+        {
+            return false;
+        }
+    }
+    Serial.println();
+    Serial.print("NewDatos: ");
+    for (int i = 0; i < 7; i++)
+    {
+        Serial.print(newdatos[i]);
+        Serial.print(" / ");
+    }
+    Serial.println();
+    Serial.println("Dentro del While");
+    return true;
 }
 void pruebaSerial(float datos[])
 {
